@@ -1,4 +1,4 @@
-# FA24_ROB502
+# FA25_ROB502
 
 ## Welcome to ROB 502!
 Below are some common commands used for the homeworks.
@@ -21,7 +21,7 @@ sudo apt update
 sudo apt install git
 git clone <paste HTTPS link>
 cd your_repo_name
-git remote add upstream https://gitlab.eecs.umich.edu/jessisc/fa24_rob502.git
+git remote add upstream https://gitlab.eecs.umich.edu/homandat/fa25-rob-502
 ```
 
 ## How to fetch new homeworks
