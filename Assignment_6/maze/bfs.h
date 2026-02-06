@@ -2,7 +2,7 @@
 #include "maze.h"
 // other includes
 // --- Your code here
-
+#include <queue>
 
 
 // ---
@@ -21,9 +21,10 @@ class BFS : public TreeSearch {
    private:
     // decide what data structure you need
     // --- Your code here
-
+    std::queue<NodePtr> _queue_;
 
 
     // ---
 };
 using BFSPtr = std::shared_ptr<BFS>;
+

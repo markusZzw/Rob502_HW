@@ -7,11 +7,11 @@ import numpy as np
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--infile", type=str, default='pointcloud1.txt')
-    parser.add_argument("-a", type=float, default=1.0)
-    parser.add_argument("-b", type=float, default=0.1)
-    parser.add_argument("-c", type=float, default=-1.0)
-    parser.add_argument("-d", type=float, default=0.0)
+    parser.add_argument("--infile", type=str, default='/home/zzw/fa25-rob-502/Assignment_4/ransac/pointcloud1.txt')
+    parser.add_argument("-a", type=float, default=0.663)
+    parser.add_argument("-b", type=float, default=-0.693)
+    parser.add_argument("-c", type=float, default=-0.282)
+    parser.add_argument("-d", type=float, default=-0.677)
 
     args = parser.parse_args()
 

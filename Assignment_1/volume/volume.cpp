@@ -10,9 +10,7 @@ int main() {
     std::cin >> radius;
     std::cin >> height;
     // --- Your code here
-
-
-
+    double volume= (radius*radius*3.1415926*height)/3;
     // ---
     std::cout << std::setprecision(3) << volume << std::endl;
     return 0;

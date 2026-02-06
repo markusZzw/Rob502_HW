@@ -1,0 +1,1 @@
+cout << "v_double+v_double= " << v_double + v_double<<endl;

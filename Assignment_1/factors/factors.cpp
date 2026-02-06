@@ -8,9 +8,17 @@ int main() {
     std::cout << "Type an integer then press Enter: ";
     std::cin >> x;
     // --- Your code here
-
-
-
+    bool is_factor = false;
+    if (x!=0){
+        if(x%2==0 || x%3==0){
+           is_factor = true;
+        } else{
+           is_factor = false;
+        }
+    }else{
+        is_factor = false;
+    }
+    
     // ---
     std::cout << is_factor << std::endl;
     return 0;

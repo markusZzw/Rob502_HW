@@ -59,9 +59,9 @@ public:
     Eigen::MatrixXd forward(Eigen::MatrixXd const &x) const override
     {
         // --- Your code here
-
-
-
+        Eigen::MatrixXd y = A * x;  
+        y.colwise() += b.col(0);    
+        return y;
         // ---
     };
 
@@ -72,8 +72,27 @@ private:
 
 // Create and implement the ReLU and Softmax classes here
 // --- Your code here
+class ReLU: public Layer{
+public:
+    ReLU(){};
+    Eigen::MatrixXd forward (const Eigen::MatrixXd &x) const override{
+        return x.array().max(0.0);
+    }
+};
 
-
+class Softmax: public Layer{
+public:
+    Softmax(){};
+    Eigen::MatrixXd forward(const Eigen::MatrixXd &x) const override{
+        Eigen::MatrixXd y = x;
+        for (int col = 0; col < x.cols(); col++){
+            y.col(col)=y.col(col).array().exp();
+            double sum_exp = y.col(col).sum();
+            y.col(col) /= sum_exp;
+        }
+        return y;
+    }
+};
 
 // ---
 
@@ -90,7 +109,6 @@ int main(int argc, char* argv[])
             data_filenames.push_back(argv[i]);
         }
     }
-
     Linear l1("A1.csv", "b1.csv");
     ReLU r;
     Linear l2("A2.csv", "b2.csv");
@@ -104,9 +122,11 @@ int main(int argc, char* argv[])
 
         // now call your layers
         // --- Your code here
-
-
-
+        Eigen::MatrixXd probabilities;
+        probabilities = l1.forward(X);
+        probabilities = r.forward(probabilities);
+        probabilities = l2.forward(probabilities);
+        probabilities = s.forward(probabilities);
         // ---
         ofs << probabilities.format(vec_csv_format) << std::endl;
     }

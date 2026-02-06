@@ -16,9 +16,7 @@ def quadratic_cost(Q, x):
 def quadratic_cost_vectorized(Q, x):
     cost_sum = 0
     # --- Your code here
-
-
-
+    cost_sum=np.einsum('ki,ij,kj->', x, Q, x)
     # ---
     return cost_sum
 

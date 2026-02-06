@@ -1,14 +1,36 @@
 // --- Your code here
+#include <iostream>
+#include <iomanip>
+#include <cmath>
+#include <string>
 
 
+std::string repeatString(std:: string a, int b){
+    std:: string result;
+    if(b==0){
+        result="";
+    }else{
+        for(int i=0;i<b;i++){
+            result+=a;
+        }
+    }
+    return result;
+}
+
+long double multiply(long long a, long long b){
+    return static_cast<long double>(a)*static_cast<long double>(b);
+}
 
 // ---
 
 // include the standard library files that defines the std:: functions
 int main() {
     // --- Your code here
-
-
+    double some_number;
+    std:: string some_string;
+    long long large_number;
+    long long even_larger_number;
+    int negative_number;
 
     // ---
     

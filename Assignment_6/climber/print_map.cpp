@@ -1,18 +1,16 @@
 #include <string>
 #include <iostream>
 // --- Your code here
-
-
-
+#include "climber.h"
 // ---
 
 void printmap(const std::map<Coordinate, int> &m)
 {
     // print each entry in the map using the format "{x},{y} val: {value}" where {x} means print the value of the variable x
     // --- Your code here
-
-
-
+    for(const auto& [coord, value] : m){
+        std::cout << coord.x << "," << coord.y << " val: " << value << std::endl;
+    }
     // ---
 }
 

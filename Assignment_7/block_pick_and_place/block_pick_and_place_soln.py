@@ -20,9 +20,9 @@ class PandaSimSolution(PandaSim):
             dp = transform_utils.transform_error(goal_pose, gripper_pose)
 
             # --- Your code here
-
-
-
+            JTJ= J@J.T
+            x = np.linalg.solve(JTJ, dp)
+            dq = J.T @ x
             # ---
 
             # Limit the size of the change in joint config
@@ -42,9 +42,14 @@ class PandaSimSolution(PandaSim):
     def block_pose_to_gripper_pose(self, block_pose):
         gripper_pose = None
         # --- Your code here
-
-
-
+        R = np.array([[1, 0, 0],
+                         [0, 0, -1],
+                         [0, 1, 0]])
+        T = np.array([0, 0.015, 0])
+        T_BG = np.eye(4)
+        T_BG[:3, :3] = R
+        T_BG[:3, 3]= T
+        gripper_pose = block_pose @ T_BG
         # --- 
 
         return gripper_pose

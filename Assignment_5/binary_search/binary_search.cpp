@@ -12,9 +12,20 @@ template <typename T>
 int iterativeBinarySearch(const std::vector<T>& vals, T key,
                           int& numTimesCalled) {
     // --- Your code here
-
-
-
+    int L = 0;
+    int R = vals.size()-1;
+    while(L <= R){
+        numTimesCalled+=1;
+        int mid = L + (R-L)/2;
+        if (vals[mid] < key){
+            L = mid+1;
+        }else if(vals[mid] > key){
+            R = mid-1;
+        }else{
+            return mid;
+        }
+    }
+    return -1;
     // ---
 }
 
@@ -22,9 +33,18 @@ template <typename T>
 int recursiveBinarySearch(const std::vector<T>& vals, T key, int l, int r,
                           int& numTimesCalled) {
     // --- Your code here
-
-
-
+    numTimesCalled++;
+    if(l > r){
+        return -1;
+    }
+    int mid = l + (r -l)/2;
+    if(vals[mid]==key){
+        return mid;
+    }else if(vals[mid] < key){
+        return recursiveBinarySearch(vals, key, mid+1, r, numTimesCalled);
+    }else{
+        return recursiveBinarySearch(vals, key, l,mid-1, numTimesCalled);
+    }
     // ---
 }
 

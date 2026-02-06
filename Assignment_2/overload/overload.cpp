@@ -28,6 +28,9 @@ namespace rob {
     }
 
     std::string sub(std::string a, int b) {
+        if (a.size() < b) {
+           return "";
+        }
         return a.substr(0, a.size() - b);
     }
 
@@ -54,13 +57,24 @@ namespace rob {
     // should be equal to the first string's length minus the second string's length
     // mult str int should repeat the string int number of times with no separation between them
     // --- Your code here
+    std::string sub(std::string a, std::string b){
+        int trim = a.length() - b.length();
+        if (trim < 0) {
+           return a;
+        }
+        return a.substr(0, trim);
+    }
 
-
+    std::string mult(std::string a, int b){
+        std::string c="";
+        for(int i=0; i<b; i++){
+            c+=a;
+        }
+        return c;
+    }
 
     // ---
 }
-
-
 // helper functions for doing the conversion
 bool numeric(const std::string& type) {
     return type == INT || type == FLOAT;
@@ -71,9 +85,12 @@ int ensureInt(const std::string& val, const std::string& type) {
     // take care to do rounding for float types
     // you may consider std::stoi and std::stof for this function
     // --- Your code here
-
-
-
+    if(type== INT){
+        return std::stoi(val);
+    }else{
+        float f = std::stof(val);          
+        return static_cast<int>(std::round(f));
+    }
     // ---
 }
 

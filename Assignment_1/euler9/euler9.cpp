@@ -2,9 +2,16 @@
 
 int euler9() {
     // --- Your code here
-
-
-
+    for(int a=1; a<1000; a++){
+        for(int b=1; b<1000; b++){
+            int c=1000-a-b;
+            if(c>0 && a*a+b*b == c*c){
+                   int product = a*b*c;
+                   return product;
+            }
+        }
+    }
+    return 0;
     // ---
 }
 

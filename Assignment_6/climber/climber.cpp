@@ -6,8 +6,8 @@
 #include <map>
 // add the include for climber.h
 // --- Your code here
-
-
+#include "climber.h"
+#include <limits>
 
 // ---
 
@@ -73,9 +73,10 @@ void climber_algorithm(std::map<Coordinate, int> const &m, Coordinate const &sta
     // Note that the Coordinate struct has operator+ defined on it, which lets you add two Coordiantes together
     std::vector<Coordinate> offsets{
         // --- Your code here
-
-
-
+        {1 ,0},
+        {-1, 0},
+        {0, 1},
+        {0, -1}
         // ---
     };
 
@@ -89,9 +90,34 @@ void climber_algorithm(std::map<Coordinate, int> const &m, Coordinate const &sta
         // If the current xy is the same as the next xy that means we've hit our local maxiumum and we should stop.
         
         // --- Your code here
+        Coordinate next_best_xy = current_xy;
+        int next_best_height = current_height;
 
+        int best_neighbor_height = std::numeric_limits<int>::min();
+        for(const auto& offset: offsets){
+            Coordinate neighbor_xy = current_xy + offset;
+            if(m.count(neighbor_xy)){
+                int neighbor_height = m.at(neighbor_xy);
+            
 
+                bool is_climbable = (neighbor_height > current_height) && 
+                                        (neighbor_height <= current_height + 2);
+                if(is_climbable){
+                    if(neighbor_height > best_neighbor_height){
+                        next_best_xy = neighbor_xy;
+                        best_neighbor_height = neighbor_height;
+                        next_best_height = neighbor_height;
+                    }
+                }
+            }
+        }
 
+        if(current_xy.x == next_best_xy.x && current_xy.y == next_best_xy.y){
+            break;
+        }else{
+            current_xy = next_best_xy;
+            current_height = next_best_height;
+        }
         // ---
     }
 

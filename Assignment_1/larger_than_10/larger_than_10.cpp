@@ -13,9 +13,10 @@ int main() {
     while (!ifs.eof()) {
         ifs >> x;
         // --- Your code here
-
-
-
+        if(x > 10){
+            std::cout<<x<<std::endl;
+            break;
+        }
         // ---
     }
     return 0;

@@ -8,17 +8,63 @@ class Table {
     // you'll probably want use to use std::pair
     // you will need to make some methods const since they'll be used in processSentence which requires a const Table
     // --- Your code here
+public:
+    Table()=default;
+    Table(std::vector <std::pair<int, std::string>>);
 
+    std::string get(int Key) const;
+    Table add(int Key, std::string Value);
 
+    const std::vector<std::pair<int, std::string>>& getData() const {
+        return data;
+    }
 
+private:
+    std::vector <std::pair<int, std::string>> data;
     // --- 
 };
+
+Table::Table(std::vector <std::pair<int, std::string>> a){
+    data=a;
+}
+
+
+std::string Table:: get(int Key) const{
+    for(const auto& d: data){
+        if(d.first==Key) {
+            return d.second;
+        }
+    }
+    return "";
+}
+
+Table Table::add(int Key, std::string Value){
+    std::vector<std::pair<int, std::string>> newData = data;
+    newData.push_back(std::make_pair(Key, Value));
+    return Table(newData);
+}
+
+Table filterOutOddKeys(const Table& t){
+    std::vector<std::pair<int, std::string>> filteredData;
+    for (const auto& d : t.getData()) {
+        if (d.first % 2 == 0) {  
+            filteredData.push_back(d);  
+        }
+    }
+    return Table(filteredData);
+}
+
 
 std::string processSentence(const Table& t, const std::vector<int>& keySequence) {
     std::string ret = "";
     for (int key : keySequence) {
         // should return " " if it's not in the table, otherwise it should return the value
-        ret += t.get(key);
+        std::string value=t.get(key);
+        if(value.empty()){
+            ret += " ";
+        }else{
+            ret += t.get(key);
+        }
     }
     return ret;
 }
@@ -27,14 +73,20 @@ Table updateTable(const Table& t1, const Table& t2) {
     // make a copy of t1 with overwriting entries from t2
     // replace entries of t1 with entries of t2, where they overlap
     // --- Your code here
+    std::vector <std::pair<int, std::string>> newData=t1.getData();
+    for(const auto& d: t2.getData()){
+        int key = d.first;
+        const std::string& value = d.second;
+        for(auto& d1: newData){
+            if(d1.first==key){
+                d1.second=value;
+                break;
+            }
+        }
+    }
+    return Table(newData);
+}
 
-
-
-// --- Your code here
-
-
-
-// ---
 
 int main(int argc, char* argv[]) {
     // figure out what constructor allows for this initialization
@@ -58,7 +110,7 @@ int main(int argc, char* argv[]) {
         std::string value;
         input >> key >> value;
 
-        t2.add(key, value);
+        t2=t2.add(key, value);
     }
     output << processSentence(t2, {2, 1, 5, 6}) << std::endl;
 
@@ -67,7 +119,7 @@ int main(int argc, char* argv[]) {
     // you should use the updateTable function here
     // note that for it to be constant, its value has to be finalized at definition time
     // --- Your code here
-
+    const Table t3 = updateTable(t1, t2);
 
 
     // ---

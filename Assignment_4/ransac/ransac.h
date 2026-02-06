@@ -3,6 +3,8 @@
 #include <iostream>
 #include <eigen3/Eigen/Eigen>
 #include <vector>
+#include <set>
+
 
 struct Plane
 {
@@ -36,9 +38,18 @@ Plane compute_plane_from_points(Eigen::Vector3d const &p0,Eigen::Vector3d const 
     // 3. set a,b,c from the normal vector `n`
     // 4. set `d = -n.dot(p0)`
     // --- Your code here
-
-
-
+    Eigen::Vector3d v1= p1-p0;
+    Eigen::Vector3d v2= p2-p0;
+    Eigen::Vector3d n= v1.cross(v2);
+    double norm = n.norm();
+    if (norm < 1e-8){
+        return Plane{0,0,0,0};
+    }
+    double a=n.x();
+    double b=n.y();
+    double c=n.z();
+    double d=-n.dot(p0);
+    return Plane{a,b,c,d};
     // ---
 }
 
@@ -49,7 +60,6 @@ public:
     {
         mt.seed(0);
     }
-
     /**
      * Given all of the data `points`, select a random subset and fit a plane to that subset.
      * the parameter points is all of the points
@@ -86,11 +96,34 @@ public:
         // 3. compute the `n_inliers` given that plane equation
         // (HINT: multiply the points matrix by the normal vector)
         // --- Your code here
+        std::set<int> indices;
+        while(indices.size()<3){
+            indices.insert(get_random_point_idx());
+        }
+        std::vector<int> index_vec(indices.begin(), indices.end());
+        Eigen::Vector3d p0 = points.row(index_vec[0]);
+        Eigen::Vector3d p1 = points.row(index_vec[1]);
+        Eigen::Vector3d p2 = points.row(index_vec[2]);
+        Plane analytic_plane = compute_plane_from_points(p0, p1, p2);
 
+        if (analytic_plane.a == 0 && analytic_plane.b == 0 && analytic_plane.c == 0 && analytic_plane.d == 0) {
+            return {analytic_plane, 0}; 
+        }
+        Eigen::Vector3d normal(analytic_plane.a, analytic_plane.b, analytic_plane.c);
+        double norm = normal.norm();
 
-
+        Eigen::VectorXd plane_values = points * normal;
+        plane_values = plane_values.array() + analytic_plane.d;
+        Eigen::VectorXd distances = plane_values.array().abs() / norm;
+        int n_inliers = (distances.array() < inlier_threshold_).count();
+        double norm1 = sqrt(analytic_plane.a*analytic_plane.a + analytic_plane.b*analytic_plane.b + analytic_plane.c*analytic_plane.c);
+        if (norm1 > 1e-8) {
+            analytic_plane.a /= norm1;
+            analytic_plane.b /= norm1;
+            analytic_plane.c /= norm1;
+            analytic_plane.d /= norm1;
+        }
         // ---
-
         return {analytic_plane, n_inliers};
     }
 };
@@ -102,22 +135,67 @@ public:
 
     // You should override the `fit` method here
     // --- Your code here
+    FitResult fit(Eigen::MatrixXd const &points) override{
+        std::set<int> indices;
+        while(indices.size()<n_sample_points_){
+            indices.insert(get_random_point_idx());
+        }
+        Eigen::MatrixXd sample_points(n_sample_points_, 3);
+        int i=0;
+        std::set<int>::iterator it;
+        for (it = indices.begin(); it != indices.end(); ++it) {
+            sample_points.row(i++) = points.row(*it);
+        }
+        Eigen::Vector3d centroid = sample_points.colwise().mean();
+        Eigen::MatrixXd centered = sample_points.rowwise() - centroid.transpose();
+        Eigen::Matrix3d cov = (centered.adjoint() * centered) / (n_sample_points_ - 1);
+        Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(cov);
+        if (solver.info() != Eigen::Success) {
+            return {Plane{0,0,0,0}, 0};
+        }
+        Eigen::Vector3d normal = solver.eigenvectors().col(0);
+        normal.normalized();
+        double d = -normal.dot(centroid);
+        Plane plane{normal.x(), normal.y(), normal.z(), d};
+        double norm = normal.norm();
+        if (norm < 1e-8) {
+            return {Plane{0,0,0,0}, 0}; 
+        }
+        
+        Eigen::VectorXd plane_values = points * normal;
+        plane_values = plane_values.array() + d;  // ax + by + cz + d
+        Eigen::VectorXd distances = plane_values.array().abs() / norm;
+        int n_inliers = (distances.array() < inlier_threshold_).count();
 
-
+        double norm1 = sqrt(plane.a*plane.a + plane.b*plane.b + plane.c*plane.c);
+        if (norm1 > 1e-8) {
+            plane.a /= norm1;
+            plane.b /= norm1;
+            plane.c /= norm1;
+            plane.d /= norm1;
+        }
+        return {plane, n_inliers};
 
     // ---
-
+    }
     int const n_sample_points_;
 };
 
 Plane ransac(BaseFitter &fitter, Eigen::MatrixXd const &points)
 {
     // --- Your code here
-
-
-
+    FitResult best_result{Plane{0,0,0,0}, 0};
+    int iterations = 1000;
+    for (int i = 0; i < iterations; i++) {
+        FitResult current = fitter.fit(points);
+        if (current.n_inliers > best_result.n_inliers) {
+            best_result = current;
+            if (best_result.n_inliers > points.rows() * 0.8) {
+                break;
+            }
+        }
+    }
     // ---
-
     // HINT: the number of inliers should be between 20 and 80 if you did everything correctly
     std::cout << best_result.n_inliers << std::endl;
     return best_result.plane;

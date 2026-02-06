@@ -17,10 +17,18 @@ int main() {
         ifs >> max_value;
         ifs >> value;
         ifs >> clip;
-        // --- Your code here
-
-
-
+        int out_value=0;
+        if(clip == false){
+            out_value=value;
+        }else{
+            if(value >= max_value){
+                out_value=max_value;
+            }else if(value <= min_value){
+                out_value=min_value;
+            }else{
+                out_value=value;
+            }
+        }
         // ---
         std::cout << out_value << std::endl;
     }

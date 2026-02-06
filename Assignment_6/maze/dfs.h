@@ -2,7 +2,7 @@
 #include "maze.h"
 // other includes
 // --- Your code here
-
+#include <stack>
 
 
 // ---
@@ -21,8 +21,8 @@ class DFS : public TreeSearch {
    private:
     // decide what data structure you need
     // --- Your code here
-
-
+    std::stack<NodePtr> _stack_;
+  
 
     // ---
 };
